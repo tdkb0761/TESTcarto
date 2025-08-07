@@ -25,6 +25,8 @@
       { title: "FI-21005-0000", loc: [47.174793, 5.165119] }
     ];
 
+    let searchMarker = null;
+
     const searchControl = new L.Control.Search({
       position: 'topleft',
       sourceData: function(text, callback) {
@@ -37,10 +39,19 @@
         });
         callback(results);
       },
-      marker: false,
+      marker: false, // on gère le marqueur nous-même
       textPlaceholder: "Test recherche…"
-    }).addTo(map);
+    })
+    .on('search:locationfound', function(e) {
+      // Supprimer l'ancien marqueur s'il existe
+      if (searchMarker) {
+        map.removeLayer(searchMarker);
+      }
+      // Ajouter un nouveau marqueur à l'endroit trouvé
+      searchMarker = L.marker(e.latlng).addTo(map).bindPopup(e.text).openPopup();
+      map.setView(e.latlng, 14);
+    })
+    .addTo(map);
   </script>
 </body>
 </html>
-
