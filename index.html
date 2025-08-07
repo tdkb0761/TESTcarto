@@ -35,6 +35,7 @@
         const results = {};
         testData.forEach(entry => {
           if (entry.title.toLowerCase().includes(text.toLowerCase())) {
+            console.log('Trouvé :', entry.title);
             results[entry.title] = entry.loc;
           }
         });
