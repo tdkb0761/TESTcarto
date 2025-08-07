@@ -28,32 +28,34 @@
 
     let searchMarker = null;
 
-    const searchControl = new L.Control.Search({
-      position: 'topleft',
-      sourceData: function(text, callback) {
-        console.log('Recherche demandée :', text);
-        const results = {};
-        testData.forEach(entry => {
-          if (entry.title.toLowerCase().includes(text.toLowerCase())) {
-            console.log('Trouvé :', entry.title);
-            results[entry.title] = entry.loc;
-          }
-        });
-        callback(results);
-      },
-      marker: false, // on gère le marqueur nous-même
-      textPlaceholder: "Test recherche…"
-    })
-    .on('search:locationfound', function(e) {
-      // Supprimer l'ancien marqueur s'il existe
-      if (searchMarker) {
-        map.removeLayer(searchMarker);
-      }
-      // Ajouter un nouveau marqueur à l'endroit trouvé
-      searchMarker = L.marker(e.latlng).addTo(map).bindPopup(e.text).openPopup();
-      map.setView(e.latlng, 14);
-    })
-    .addTo(map);
+  const searchControl = new L.Control.Search({
+    position: 'topleft',
+    sourceData: function(text, callback) {
+      console.log('Recherche demandée :', text);
+      const results = [];
+      testData.forEach(entry => {
+        if (entry.title.toLowerCase().includes(text.toLowerCase())) {
+          console.log('Trouvé :', entry.title);
+          results.push({
+            loc: entry.loc,
+            title: entry.title
+          });
+        }
+      });
+      callback(results);
+    },
+    marker: false,
+    textPlaceholder: "Test recherche…"
+  })
+  .on('search:locationfound', function(e) {
+    if (searchMarker) {
+      map.removeLayer(searchMarker);
+    }
+    searchMarker = L.marker(e.latlng).addTo(map).bindPopup(e.text).openPopup();
+    map.setView(e.latlng, 14);
+  })
+  .addTo(map);
+
   </script>
 </body>
 </html>
