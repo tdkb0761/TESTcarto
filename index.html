@@ -32,20 +32,28 @@
     position: 'topleft',
     sourceData: function(text, callback) {
       console.log('Recherche demandée :', text);
-      const results = [];
+      const results = {};
       testData.forEach(entry => {
-        if (entry.title.toLowerCase().includes(text.toLowerCase())) {
-          console.log('Trouvé :', entry.title);
-          results.push({
-            loc: entry.loc,
-            title: entry.title
-          });
-        }
+        results[entry.title] = { loc: entry.loc, title: entry.title };
       });
       callback(results);
     },
+    filterData: function(text, records) {
+      // Recherche "contient" au lieu de "commence par"
+      var ret = {};
+      text = text.toLowerCase();
+      for (var key in records) {
+        if (key.toLowerCase().includes(text)) {
+          ret[key] = records[key];
+        }
+      }
+      return ret;
+    },
     marker: false,
-    textPlaceholder: "Test recherche…"
+    textPlaceholder: "Test recherche…",
+    minLength: 1,
+    autoType: false,
+    firstTipSubmit: true
   })
   .on('search:locationfound', function(e) {
     if (searchMarker) {
@@ -55,6 +63,7 @@
     map.setView(e.latlng, 14);
   })
   .addTo(map);
+
 
   </script>
 </body>
